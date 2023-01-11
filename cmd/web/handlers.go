@@ -9,12 +9,19 @@ import (
 )
 
 func home(w http.ResponseWriter, r *http.Request) {
+
+	files := []string{
+		"./ui/html/homepage.tmpl",
+		"./ui/html/baselayout.tmpl",
+		"./ui/html/footer.partial.tmpl",
+	}
 	// defining a URL path, if the URL path is not like this , it will show a HTTP Not found error
 	if r.URL.Path != "/" {
 		http.NotFound(w, r)
 		return
 	}
-	ts, err := template.ParseFiles("./ui/html/homepage.html")
+	// This is used to show a Webpage on the website
+	ts, err := template.ParseFiles(files...)
 	if err != nil {
 		log.Println(err.Error())
 		http.Error(w, "Internal Server Error", 500)
@@ -26,9 +33,6 @@ func home(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Internal Server Error", 500)
 		return
 	}
-
-	w.Write([]byte("Welcome to the Home Page, SnippyBox\n"))
-	w.Write([]byte("We are really happy to Have you Here"))
 
 }
 
