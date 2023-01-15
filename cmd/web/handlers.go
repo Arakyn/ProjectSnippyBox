@@ -8,7 +8,7 @@ import (
 	"strconv"
 )
 
-func home(w http.ResponseWriter, r *http.Request) {
+func (app *application) home(w http.ResponseWriter, r *http.Request) {
 
 	files := []string{
 		"./ui/html/homepage.tmpl",
@@ -23,30 +23,33 @@ func home(w http.ResponseWriter, r *http.Request) {
 	// This is used to show a Webpage on the website
 	ts, err := template.ParseFiles(files...)
 	if err != nil {
-		log.Println(err.Error())
+
 		http.Error(w, "Internal Server Error", 500)
+		app.errorlog.Println(err)
 		return
 	}
 	err = ts.Execute(w, nil)
 	if err != nil {
 		log.Println(err.Error())
 		http.Error(w, "Internal Server Error", 500)
+		app.errorlog.Println(err)
 		return
 	}
 
 }
 
-func showSnippet(w http.ResponseWriter, r *http.Request) {
+func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.URL.Query().Get("id"))
 	if err != nil || id < 1 {
 		http.NotFound(w, r)
+		app.errorlog.Println(err)
 		return
 	}
 	fmt.Fprintf(w, "\nWelcome to SnippyShow, here is what you asked for, %d...", id)
 
 }
 
-func create(w http.ResponseWriter, r *http.Request) {
+func (app *application) create(w http.ResponseWriter, r *http.Request) {
 
 	w.Header()["Date"] = nil
 	if r.Method != http.MethodPost {
