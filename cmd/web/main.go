@@ -65,7 +65,8 @@ func main() {
 	}
 
 	InfoLog.Printf("Server Starting Up on %s", *addr)
+
 	err := srv.ListenAndServe()
-	ErrorLog.Fatal(err)
+	app.errorlog.Fatal(err)
 
 }

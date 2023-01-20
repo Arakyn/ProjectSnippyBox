@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"html/template"
-	"log"
 	"net/http"
 	"strconv"
 )
@@ -15,24 +14,22 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		"./ui/html/baselayout.tmpl",
 		"./ui/html/footer.partial.tmpl",
 	}
+
 	// defining a URL path, if the URL path is not like this , it will show a HTTP Not found error
 	if r.URL.Path != "/" {
-		http.NotFound(w, r)
+		app.notFound(w)
 		return
 	}
 	// This is used to show a Webpage on the website
 	ts, err := template.ParseFiles(files...)
 	if err != nil {
 
-		http.Error(w, "Internal Server Error", 500)
-		app.errorlog.Println(err)
+		app.serverError(w, err)
 		return
 	}
 	err = ts.Execute(w, nil)
 	if err != nil {
-		log.Println(err.Error())
-		http.Error(w, "Internal Server Error", 500)
-		app.errorlog.Println(err)
+		app.serverError(w, err)
 		return
 	}
 
@@ -41,7 +38,7 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.URL.Query().Get("id"))
 	if err != nil || id < 1 {
-		http.NotFound(w, r)
+		app.notFound(w)
 		app.errorlog.Println(err)
 		return
 	}
@@ -54,7 +51,7 @@ func (app *application) create(w http.ResponseWriter, r *http.Request) {
 	w.Header()["Date"] = nil
 	if r.Method != http.MethodPost {
 		w.Header().Set("Allowed :", http.MethodPost)
-		http.Error(w, "Method Not Allowed Please Use Another", 405)
+		app.clientError(w, http.StatusMethodNotAllowed)
 		return
 	}
 	w.Write([]byte("Here you can create Snippetppts"))
