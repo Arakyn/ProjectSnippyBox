@@ -30,7 +30,7 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	err = ts.Execute(w, nil)
 	if err != nil {
 		app.serverError(w, err)
-		return
+
 	}
 
 }
@@ -52,6 +52,7 @@ func (app *application) create(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		w.Header().Set("Allowed :", http.MethodPost)
 		app.clientError(w, http.StatusMethodNotAllowed)
+
 		return
 	}
 	w.Write([]byte("Here you can create Snippetppts"))
